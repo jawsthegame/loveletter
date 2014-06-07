@@ -27,6 +27,10 @@ class Card(object):
   def draw_effect(self, player, card):
     return NotImplemented
 
+  @abstractmethod
+  def discard_effect(self, player):
+    return NotImplemented
+
   def pick_player(self, others):
     for i, player in enumerate(others):
       Utils.write('%d: %s' % (i, player.name))
@@ -57,6 +61,9 @@ class Guard(Card):
   def draw_effect(self, player, card):
     pass
 
+  def discard_effect(self, player):
+    pass
+
 
 class Priest(Card):
   type_ = CARD_TYPES[1]
@@ -67,6 +74,9 @@ class Priest(Card):
       Utils.write('%d: %s' % card.type_)
 
   def draw_effect(self, player, card):
+    pass
+
+  def discard_effect(self, player):
     pass
 
 
@@ -91,6 +101,9 @@ class Baron(Card):
   def draw_effect(self, player, card):
     pass
 
+  def discard_effect(self, player):
+    pass
+
 
 class Handmaid(Card):
   type_ = CARD_TYPES[3]
@@ -99,6 +112,9 @@ class Handmaid(Card):
     player.immune = True
 
   def draw_effect(self, player, card):
+    pass
+
+  def discard_effect(self, player):
     pass
 
 
@@ -111,6 +127,9 @@ class Prince(Card):
     other.draw()
 
   def draw_effect(self, player, card):
+    pass
+
+  def discard_effect(self, player):
     pass
 
 
@@ -126,6 +145,9 @@ class King(Card):
   def draw_effect(self, player, card):
     pass
 
+  def discard_effect(self, player):
+    pass
+
 
 class Countess(Card):
   type_ = CARD_TYPES[6]
@@ -135,4 +157,22 @@ class Countess(Card):
 
   def draw_effect(self, player, card):
     if isinstance(card, Prince) or isinstance(card, King):
+      Utils.write('%s had to discard the Countess.' % player.name)
       player.hand.remove(self)
+
+  def discard_effect(self, player):
+    pass
+
+
+class Princess(Card):
+  type_ = CARD_TYPES[7]
+
+  def effect(self, player, others):
+    pass
+
+  def draw_effect(self, player, card):
+    pass
+
+  def discard_effect(self, player):
+    Utils.write('%s discarded the Princess, and is out!' % player.name)
+    player.active = False

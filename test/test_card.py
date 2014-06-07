@@ -8,6 +8,7 @@ from card import Handmaid
 from card import King
 from card import Priest
 from card import Prince
+from card import Princess
 from player import Player
 from utils import Utils
 
@@ -126,3 +127,10 @@ class TestCard(TestCase):
     me.hand = [c]
     c.draw_effect(me, Baron())
     self.assertEquals(1, len(me.hand))
+
+  def test_princess(self):
+    prns = Princess()
+    me = self._new_player('Alice')
+
+    prns.discard_effect(me)
+    self.assertFalse(me.active)
