@@ -33,9 +33,17 @@ class Card(object):
 
   def pick_player(self, others):
     for i, player in enumerate(others):
-      Utils.write('%d: %s' % (i, player.name))
+      text = '%d: %s' % (i, player.name)
+      if player.immune:
+        text += " (immune)"
+      Utils.write(text)
     pick = int(Utils.read('Which Player? '))
     return others[pick]
+
+  def check_immunity(self, player):
+    if player.immune:
+      Utils.write('\n%s is immune this turn.' % player.name)
+      return True
 
   def assert_hand(self, player):
     assert len(player.hand) is 1
@@ -49,14 +57,18 @@ class Guard(Card):
       _, name = t
       Utils.write('%d: %s' % (i, name))
 
-    pick = int(Utils.read('Card Type? '))
+    pick = int(Utils.read('\nCard Type? '))
     card_type = CARD_TYPES[pick+1]
 
     other = self.pick_player(others)
+    if self.check_immunity(other): return
+
     self.assert_hand(other)
     if other.hand[0].type_ == card_type:
-      Utils.write('MATCH! %s is out of the round.' % other.name)
+      Utils.write('\nMATCH! %s is out of the round.' % other.name)
       other.active = False
+    else:
+      Utils.write('\nNo match.')
 
   def draw_effect(self, player, card):
     pass
@@ -70,6 +82,8 @@ class Priest(Card):
 
   def effect(self, player, others):
     other = self.pick_player(others)
+    if self.check_immunity(other): return
+
     for card in other.hand:
       Utils.write('%d: %s' % card.type_)
 
@@ -85,18 +99,24 @@ class Baron(Card):
 
   def effect(self, player, others):
     other = self.pick_player(others)
+    if self.check_immunity(other): return
+
     self.assert_hand(player)
     self.assert_hand(other)
 
-    val, _        = player.hand[0].type_
-    other_val, _  = other.hand[0].type_
+    val, name             = player.hand[0].type_
+    other_val, other_name = other.hand[0].type_
 
     if val > other_val:
+      Utils.write('%s is out. %s (%d) over %s (%d).' \
+        % (other.name, name, val, other_name, other_val))
       other.active = False
     elif val < other_val:
+      Utils.write('%s is out. %s (%d) over %s (%d).' \
+        % (player.name, other_name, other_val, name, val))
       player.active = False
     else:
-      Utils.write('Tie!')
+      Utils.write('\nTie!')
 
   def draw_effect(self, player, card):
     pass
@@ -123,6 +143,8 @@ class Prince(Card):
 
   def effect(self, player, others):
     other = self.pick_player([player] + others)
+    if self.check_immunity(other): return
+
     other.discard_all()
     other.draw()
 
@@ -138,6 +160,8 @@ class King(Card):
 
   def effect(self, player, others):
     other = self.pick_player(others)
+    if self.check_immunity(other): return
+
     tmp = other.hand
     other.hand = player.hand
     player.hand = tmp

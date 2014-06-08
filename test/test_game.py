@@ -17,11 +17,12 @@ class TestGame(TestCase):
     self.assertEquals('Alice', game.players[0].name)
     self.assertEquals('Jimbo', game.players[1].name)
 
-  def test_initial_discard(self):
+  def test_initial_deal(self):
     game = self._game()
     self.assertEquals(16, len(game.deck))
-    game._initial_discard()
-    self.assertEquals(13, len(game.deck))
+    game._initial_deal()
+    # 2 players, remove 3 cards, then deal one to each player
+    self.assertEquals(11, len(game.deck))
 
   def _game(self):
     return_values = ['Jimbo', 'Alice', 2]
