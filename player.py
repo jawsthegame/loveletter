@@ -4,6 +4,7 @@ class Player(object):
     self.game = game
     self.hand = []
     self.played = []
+    self.wins = 0
     self.active = True
     self.immune = False
 
@@ -17,7 +18,7 @@ class Player(object):
 
   def play(self):
     if len(self.hand) > 1:
-      pass
+      Utils.read('Card to Play? ')
 
   def discard(self):
     pass
@@ -25,3 +26,7 @@ class Player(object):
   def discard_all(self):
     self.played += self.hand
     self.hand = []
+
+  def turn(self):
+    self.draw()
+    self.play()
